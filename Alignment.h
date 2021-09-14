@@ -16,6 +16,7 @@ public:
 	int CCCV,CCCE;
 
 	int *alignment; //array of alignment of two networks
+    double **alignScore; //this matrix contains the score of each matching pair
 	int *comp; //array of connected components in the resulted alignment
 	int maxComp; //maximum connected component of the resulted alignment
 	int maxDeg; //max degree of two networks
