@@ -1,6 +1,7 @@
 #include "Alignment.h"
 #include <fstream>
 #include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 //constructor
@@ -98,7 +99,7 @@ void Alignment::align(double lambda, double alpha)
     alignment = new int[network1.size]; //alignment array
     float *nodeScore1 = new float[network1.size]; //scores of nodes of smaller network
     float *nodeScore2 = new float[network2.size]; //scores of nodes of bigger network
-    double **alignScore = new double*[network1.size]; //this matrix contains the score of each matching pair
+    alignScore = new double*[network1.size]; //this matrix contains the score of each matching pair
     int *best = new int[network1.size]; //array of best align scores
     float ss;
     //initial values
@@ -250,13 +251,6 @@ void Alignment::align(double lambda, double alpha)
     delete [] nodeScore1;
     delete [] nodeScore2;
     delete [] best;
-    
-    for(int j=0; j<network1.size; j++)
-    {
-        delete [] alignScore[j];
-    } 
-    delete [] alignScore;
-    
     
     evaluate(); //calculate the measurment evaluations
 }
@@ -456,18 +450,29 @@ void Alignment::outputEvaluation(string name)
 //Input parameter name determines the file that mapping is to be written in.    
 void Alignment::outputAlignment(string name)
 {
-	string alignFile = name;
-    
-	alignFile.append(".alignment");
-    
-    
-	ofstream alignmentFile( alignFile.c_str());
+
+    struct TwoNodesAndAlignmentScore {
+        string node1;
+        string node2;
+        double score;
+    };
+
+    TwoNodesAndAlignmentScore *alignmentForOutput = new TwoNodesAndAlignmentScore[network1.size];
+
 	if(reverse)
 		for(int i=0; i<network1.size; i++)
-            alignmentFile << network1.getName( alignment[ i ] ) << ' ' << network2.getName( i )<< endl;
+            alignmentForOutput[i] = {network1.getName( alignment[ i ] ), network2.getName( i ), alignScore[ alignment[i] ][ i ]};
 	else
 		for(int i=0; i<network1.size; i++)
-            alignmentFile << network1.getName( i ) << ' ' << network2.getName( alignment[ i ] )<< endl;
+            alignmentForOutput[i] = {network1.getName( i ), network2.getName( alignment[ i ] ), alignScore[ i ][ alignment[i] ]};
+    
+    std::sort(alignmentForOutput, alignmentForOutput + network1.size, [](const TwoNodesAndAlignmentScore &lhs, const TwoNodesAndAlignmentScore &rhs){return lhs.score > rhs.score;});
+
+    string alignFile = name;
+	alignFile.append(".alignment");
+    ofstream alignmentFile( alignFile.c_str());
+    for(int i=0; i<network1.size; i++)
+        alignmentFile << alignmentForOutput[i].node1 << ' ' << alignmentForOutput[i].node2 << ' ' << alignmentForOutput[i].score << endl;
 }
 //instructor
 Alignment::Alignment(void)
