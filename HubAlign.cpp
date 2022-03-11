@@ -12,12 +12,14 @@ exception er;
 int main(int argc, char* argv[])
 {
     double lambda = 0.2; //a is alpha that controlls the factor of edgeweights
-    double alpha=0.7;
+    double alpha = 0.7;
     int degree = 10; //controlls the step of making the skeleton
     
     char* name1; //name of the first network
     char* name2; //name of second network
     char* blastFile;
+    char* inputDir = (char*)"."; // input directory. Default - current working directory
+    char* outputDir = (char*)"."; // output directory. Default - current working directory
     try 
     {
         if(argc < 3) {
@@ -60,6 +62,14 @@ int main(int argc, char* argv[])
                     else if(argv[i-1][1]=='a')
                     {
                         alpha = atof(argv[i]);
+                    } 
+                    else if(argv[i-1][1]=='o')
+                    {
+                        outputDir=argv[i];
+                    }
+                    else if(argv[i-1][1]=='i')
+                    {
+                        inputDir=argv[i];
                     }
 
                     i++;// to reach the next input parameter if there is
@@ -75,8 +85,8 @@ int main(int argc, char* argv[])
 
         cout << "\n=============== HubAlign ==================\n";
         //construct the networks
-        Network network1(name1); 
-        Network network2(name2);
+        Network network1(inputDir, name1); 
+        Network network2(inputDir, name2);
         bool reverse = false; //it means size of first input network is bigger than second one
         
         if(network1.size > network2.size)
@@ -98,7 +108,7 @@ int main(int argc, char* argv[])
         
 		//making the name for output file
         stringstream strm;
-        strm << name1 << "-" << name2;
+        strm << outputDir << "/" << name1 << "-" << name2;
         alignment.outputEvaluation(strm.str());
         alignment.outputAlignment(strm.str());
         

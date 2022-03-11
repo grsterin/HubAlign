@@ -34,7 +34,7 @@ public:
     
     //constructor, this function takes the network file and construct the graph of it. It finds the number of edges and the maximu degree of the network and assign to each node an ID.
     //Input parameter nam is the name of the file of the network.
-	Network(char *nam); 
+	Network(char *inputDirectory, char *nam); 
 	
     //constructor.does nothing
     Network(void);

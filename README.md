@@ -26,6 +26,9 @@ The options are as fallows:
 
 ./HubAlign Test1.tab Test2.tab –l 0.1 –a 1 
 
+- i : input directory - path to a directory where networks files are located
+- o : output directory - path to the directory where HubAlign should store the alignment result files
+
 #############################
 
 Analyze the output

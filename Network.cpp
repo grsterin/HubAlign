@@ -3,12 +3,12 @@
 #include <iostream>
 //constructor, this function takes the network file and construct the graph of it. It finds the number of edges and the maximu degree of the network and assign to each node an ID.
 //Input parameter nam is the name of the file of the network.
-Network::Network(char *nam)
+Network::Network(char *inputDirectory, char *nam)
 {
     try
 	{
 		name = nam;
-		string fileName = name;
+		string fileName = std::string(inputDirectory) + "/" + name;
         string line;
 		string token;
         int id1, id2;
